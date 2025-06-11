@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RewardedTV</title>
+  <link rel="stylesheet" href="style.css"/>
+
+  <style>
+    body {
+      background: #0d001a !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Hamburger menu icon (no functionality yet) -->
+    <button id="menu-btn" style="
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #c7a4ff;
+      cursor: pointer;
+    ">☰</button>
+
+    <div class="logo">REWARDED<span style="color: gold;">TV</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="helpers.html">Helpers</a>
+      <a href="videos.html">Videos</a>
+      <a href="store.html">Store</a>
+      <a href="profile.html">Profile</a>
+      <a href="admin.html" id="admin-link">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
+      <img src="assets/16503665-9D0B-4FCF-B418-1CFB04D9F41C.png" alt="RewardedTV Logo" style="width: 100px; margin: 10px auto; display: block;">
+      <h2 style="color: #c7a4ff;">Welcome to RewardedTV</h2>
+      <p style="color: #ccc;">
+        Step into a new universe where <strong>you control how you earn</strong>. Watch videos, earn rewards, manage your account,
+        and explore premium content — all in one place. Welcome to the future of entertainment: <strong>Watch2Earn</strong>.
+      </p>
+    </section>
+
+    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
+      <h2>📺 Featured Video</h2>
+      <p>Watch a video to earn daily rewards</p>
+      <button onclick="watchVideo()">▶ Watch on YouTube</button>
+    </section>
+
+    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
+      <h2>🎁 Rewards Summary</h2>
+      <p>Videos Watched: <span id="watched">0</span></p>
+      <p>Rewards Earned: $<span id="earned">0.00</span></p>
+      <p>Caps: <span id="caps">0</span></p>
+      <p>Balance: $<span id="balance">0.00</span></p>
+      <p>Boost: <span id="boost">0%</span></p>
+      <p>Helpers Active: <span id="helpersCount">0</span></p>
+      <button style="margin-top: 10px; background: #8000ff; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+        Use CAPS
+      </button>
+    </section>
+
+    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
+      <h2>🔐 Login / Register</h2>
+      <input type="email"    id="email"    placeholder="Email"/>
+      <input type="password" id="password" placeholder="Password"/>
+      <br/>
+      <button id="login-btn">Login</button>
+      <button id="register-btn">Register</button>
+      <button id="logout-btn">Logout</button>
+    </section>
+  </main>
+
+  <!-- Firebase compat scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+
+  <footer style="margin-top: 40px; padding: 20px; background: #120022; border-top: 1px solid #8000ff; color: #c7a4ff; font-size: 14px;">
+    <div style="margin-bottom: 10px;">
+      <a href="support.html" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Support</a>
+      <a href="https://t.me/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Telegram</a>
+      <a href="https://twitter.com/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Twitter</a>
+      <a href="https://instagram.com/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Instagram</a>
+    </div>
+    <div>© 2025 RewardedTV. All rights reserved.</div>
+  </footer>
+</body>
+</html>
