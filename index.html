@@ -4,93 +4,207 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RewardedTV</title>
-  <link rel="stylesheet" href="style.css"/>
-
   <style>
-    body {
-      background: #0d001a !important;
+    /* … your existing CSS above … */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#0a0a0a; color:#e0e0e0; line-height:1.6; }
+    header.header { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; background:#1a1a1a; position:sticky; top:0; }
+    .left-nav { display:flex; align-items:center; }
+    .menu-toggle { display:none; flex-direction:column; cursor:pointer; margin-right:1rem; }
+    .menu-toggle .bar { height:3px; width:25px; background:#9b59b6; margin:4px 0; }
+    .nav-links { list-style:none; display:flex; }
+    .nav-links li { margin-left:1.5rem; }
+    .nav-links a { text-decoration:none; color:#e0e0e0; font-weight:500; }
+    .logo-header img { height:40px; }
+    .right-nav a { margin-left:1rem; padding:0.5rem 1rem; background:#9b59b6; color:#111; text-decoration:none; border-radius:4px; }
+    .right-nav a:hover { background:#8e44ad; }
+    @media (max-width:768px) {
+      .menu-toggle { display:flex; }
+      .nav-links { position:absolute; top:70px; left:0; background:#1a1a1a; flex-direction:column; width:200px; transform:translateX(-100%); transition:transform .3s; padding-top:1rem; }
+      .nav-links.active { transform:translateX(0); }
+      .nav-links li { margin:1rem 0; text-align:center; }
     }
+    .hero { background:#111; height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; margin:2rem 0; }
+    .hero h1 { color:#9b59b6; font-size:2.5rem; margin-bottom:0.5rem; }
+    .hero p { color:#e0e0e0; margin-bottom:1rem; }
+    .hero button { padding:0.75rem 1.5rem; background:#9b59b6; color:#111; border:none; border-radius:4px; cursor:pointer; }
+    .hero button:hover { background:#8e44ad; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin:1rem 2rem; }
+    .stat-card { background:#1c1c1c; padding:1rem; border-radius:8px; text-align:center; }
+    .stat-card h3 { color:#9b59b6; margin-bottom:0.5rem; }
+    .stat-card .value { font-size:1.5rem; color:#e0e0e0; margin-bottom:0.5rem; }
+    .stat-card .btn-small { padding:0.25rem 0.5rem; background:#9b59b6; color:#111; border:none; border-radius:4px; cursor:pointer; }
+    .stat-card .btn-small:hover { background:#8e44ad; }
+    .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin:1rem 2rem; padding:1rem; background:#111; }
+    .feature { background:#1c1c1c; padding:1rem; border-radius:8px; text-align:center; }
+    .feature h2 { color:#9b59b6; margin-bottom:0.5rem; }
+    .feature p { color:#e0e0e0; margin-bottom:1rem; }
+    .feature input, .feature button { width:100%; margin-top:0.5rem; padding:0.5rem; border:1px solid #9b59b6; border-radius:4px; background:#1a1a1a; color:#e0e0e0; }
+    .feature button { background:#9b59b6; color:#111; border:none; cursor:pointer; }
+    .feature button:hover { background:#8e44ad; }
+    footer.footer { text-align:center; padding:1rem; background:#1a1a1a; margin-top:2rem; }
+
+    /* ——— NEW HERO LOGOS ——— */
+    .hero-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .hero-logo {
+      height: 60px;
+      margin: 0 1rem;
+    }
+
+    /* ——— UNIFIED STREAKS & LEADERBOARD STYLING ——— */
+    .streaks-list,
+    .leaderboard-list {
+      max-width: 500px;
+      margin: 1rem auto;
+      background: #1c1c1c;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 0.5rem 0;
+      counter-reset: rank;
+      list-style: none;
+    }
+    .streaks-list li,
+    .leaderboard-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2a2a2a;
+      counter-increment: rank;
+      margin-bottom: 0.5rem;
+    }
+    .streaks-list li:last-child,
+    .leaderboard-list li:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .streaks-list li:nth-child(odd),
+    .leaderboard-list li:nth-child(odd) {
+      background: rgba(255,255,255,0.05);
+    }
+    .streaks-list .position,
+    .leaderboard-list .position {
+      width: 2.5rem;
+      font-weight: bold;
+      color: #9b59b6;
+      text-align: left;
+    }
+    .streaks-list .position::before,
+    .leaderboard-list .position::before {
+      content: counter(rank) ". ";
+    }
+    /* re-add medals on leaderboard only */
+    .leaderboard-list li:nth-child(1) .position::before { content: "🥇 1. "; }
+    .leaderboard-list li:nth-child(2) .position::before { content: "🥈 2. "; }
+    .leaderboard-list li:nth-child(3) .position::before { content: "🥉 3. "; }
+    .streaks-list .streak-text,
+    .leaderboard-list .name {
+      flex: 1;
+      margin-left: 1rem;
+      color: #e0e0e0;
+    }
+    .streak-amount,
+    .leaderboard-list .watches {
+      color: #f39c12;
+      font-weight: bold;
+    }
+
+    /* … rest of your existing CSS below … */
   </style>
 </head>
 <body>
-  <header>
-    <!-- Hamburger menu icon (no functionality yet) -->
-    <button id="menu-btn" style="
-      position: absolute;
-      top: 18px;
-      left: 20px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: #c7a4ff;
-      cursor: pointer;
-    ">☰</button>
-
-    <div class="logo">REWARDED<span style="color: gold;">TV</span></div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="helpers.html">Helpers</a>
-      <a href="videos.html">Videos</a>
-      <a href="store.html">Store</a>
-      <a href="profile.html">Profile</a>
-      <a href="admin.html" id="admin-link">Admin</a>
-    </nav>
+  <header class="header">
+    <div class="left-nav">
+      <div class="menu-toggle" id="mobile-menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="helpers.html">Helpers</a></li>
+        <li><a href="videos.html">Videos</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="updates.html">Updates</a></li>  
+        <li><a href="roadmap.html">Roadmap</a></li> 
+    </div>
+    <!-- logo-header removed -->
+    <div class="right-nav">
+      <a href="admin.html">Admin</a>
+    </div>
   </header>
 
-  <main class="container">
-    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
-      <img src="assets/16503665-9D0B-4FCF-B418-1CFB04D9F41C.png" alt="RewardedTV Logo" style="width: 100px; margin: 10px auto; display: block;">
-      <h2 style="color: #c7a4ff;">Welcome to RewardedTV</h2>
-      <p style="color: #ccc;">
-        Step into a new universe where <strong>you control how you earn</strong>. Watch videos, earn rewards, manage your account,
-        and explore premium content — all in one place. Welcome to the future of entertainment: <strong>Watch2Earn</strong>.
-      </p>
-    </section>
+  <section class="hero">
+    <div class="hero-title">
+      <img src="assets/logo.png" class="hero-logo" alt="Logo Left"/>
+      <h1>Unlock Daily Rewards</h1>
+      <img src="assets/logo.png" class="hero-logo" alt="Logo Right"/>
+    </div>
+    <p>Watch videos, earn credits, and claim exclusive perks.</p>
+    <button onclick="watchVideo()">▶ Watch on YouTube</button>
+  </section>
 
-    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
-      <h2>📺 Featured Video</h2>
-      <p>Watch a video to earn daily rewards</p>
-      <button onclick="watchVideo()">▶ Watch on YouTube</button>
-    </section>
+  <section class="stats">
+    <div class="stat-card"><h3>Videos Watched</h3><div class="value" id="watched">0</div></div>
+    <div class="stat-card"><h3>Rewards Earned</h3><div class="value" id="earned">$0.00</div></div>
+    <div class="stat-card"><h3>Caps</h3><div class="value" id="caps">0</div><button class="btn-small" onclick="useCaps()">Use Caps</button></div>
+    <div class="stat-card"><h3>Balance</h3><div class="value" id="balance">$0.00</div></div>
+    <div class="stat-card"><h3>Boost</h3><div class="value" id="boost">0%</div></div>
+    <div class="stat-card"><h3>Helpers Active</h3><div class="value" id="helpersCount">0</div></div>
+  </section>
 
-    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
-      <h2>🎁 Rewards Summary</h2>
-      <p>Videos Watched: <span id="watched">0</span></p>
-      <p>Rewards Earned: $<span id="earned">0.00</span></p>
-      <p>Caps: <span id="caps">0</span></p>
-      <p>Balance: $<span id="balance">0.00</span></p>
-      <p>Boost: <span id="boost">0%</span></p>
-      <p>Helpers Active: <span id="helpersCount">0</span></p>
-      <button style="margin-top: 10px; background: #8000ff; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-        Use CAPS
-      </button>
-    </section>
+  <section class="features">
+    <div class="feature">
+      <h2>Daily Streaks</h2>
+      <ol class="streaks-list">
+        <li><span class="position"></span><span class="streak-text">Watch 1000 videos <span class="streak-amount">Reward: $10</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Watch 2000 videos <span class="streak-amount">Reward: $20</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Watch 3000 videos <span class="streak-amount">Reward: $30</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Watch 4000 videos <span class="streak-amount">Reward: $40</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Watch 5000 videos <span class="streak-amount">Reward: $50</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Upload 5 videos <span class="streak-amount">Reward: $10</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Upload 10 videos <span class="streak-amount">Reward: $20</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Upload 20 videos <span class="streak-amount">Reward: $30</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Upload 30 videos <span class="streak-amount">Reward: $40</span></span></li>
+        <li><span class="position"></span><span class="streak-text">Upload 40 videos <span class="streak-amount">Reward: $50</span></span></li>
+      </ol>
+    </div>
 
-    <section class="card" style="background-color: #0d001a; border-color: #8000ff;">
-      <h2>🔐 Login / Register</h2>
-      <input type="email"    id="email"    placeholder="Email"/>
+    <div class="feature">
+      <h2> Login / Register</h2>
+      <input type="email" id="email" placeholder="Email"/>
       <input type="password" id="password" placeholder="Password"/>
-      <br/>
       <button id="login-btn">Login</button>
       <button id="register-btn">Register</button>
       <button id="logout-btn">Logout</button>
-    </section>
-  </main>
+    </div>
 
-  <!-- Firebase compat scripts -->
+    <div class="feature">
+      <h2>Leaderboard</h2>
+      <ol class="leaderboard-list">
+        <li><span class="position"></span><span class="name">Ziccas</span><span class="watches">763,000$</span></li>
+        <li><span class="position"></span><span class="name">Voided</span><span class="watches">761,000$</span></li>
+        <li><span class="position"></span><span class="name">Tunez</span><span class="watches">723,000$</span></li>
+        <li><span class="position"></span><span class="name">Maztuki</span><span class="watches">548,000$</span></li>
+        <li><span class="position"></span><span class="name">Elicryptosignals</span><span class="watches">509,000$</span></li>
+        <li><span class="position"></span><span class="name">Rager</span><span class="watches">480,000$</span></li>
+        <li><span class="position"></span><span class="name">CryptoTipo</span><span class="watches">400,000$</span></li>
+        <li><span class="position"></span><span class="name">Hank</span><span class="watches">300,000$</span></li>
+        <li><span class="position"></span><span class="name">DegenApe</span><span class="watches">200,000$</span></li>
+        <li><span class="position"></span><span class="name">Iamnomad</span><span class="watches">100,000$</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="footer"><p>&copy; 2025 RewardedTV. All rights reserved.</p></footer>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <script src="app.js"></script>
-
-  <footer style="margin-top: 40px; padding: 20px; background: #120022; border-top: 1px solid #8000ff; color: #c7a4ff; font-size: 14px;">
-    <div style="margin-bottom: 10px;">
-      <a href="support.html" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Support</a>
-      <a href="https://t.me/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Telegram</a>
-      <a href="https://twitter.com/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Twitter</a>
-      <a href="https://instagram.com/rewardedtv" target="_blank" style="margin: 0 10px; color: #c7a4ff; text-decoration: none;">Instagram</a>
-    </div>
-    <div>© 2025 RewardedTV. All rights reserved.</div>
-  </footer>
+  <script>document.getElementById('mobile-menu').addEventListener('click',()=>document.getElementById('nav-links').classList.toggle('active'));</script>
 </body>
 </html>
