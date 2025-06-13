@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <div class="logo">REWARDED<span style="color: gold;">TV</span> Dashboard</div>
+  </header>
+  <main class="container">
+    
+    <!-- ==== Publish Update Form (new) ==== -->
+    <section class="card">
+      <h2>📢 Publish a Community Update</h2>
+      <form id="update-form" style="display:flex; flex-direction:column; gap:0.5rem; max-width:600px; margin-bottom:2rem;">
+        <input id="upd-title" type="text" placeholder="Update Title" style="padding:0.5rem;"/>
+        <textarea id="upd-body" rows="4" placeholder="Update Text" style="padding:0.5rem;"></textarea>
+        <button type="submit" style="padding:0.5rem; background:#9b59b6; color:#111; border:none; border-radius:4px; cursor:pointer;">
+          Publish Update
+        </button>
+      </form>
+    </section>
+    <!-- ==== end Publish Update Form ==== -->
+
+    <h2>User Management</h2>
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Watched</th>
+          <th>Caps</th>
+          <th>Balance</th>
+          <th>Wallet</th>
+          <th>Health</th>
+          <th>Pets</th>
+          <th>Claimed</th>
+          <th>Vested</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZJwv-o931FA_nRB68UiT7gHIuzx-e5rQ",
+      authDomain: "rewardedtv-1e5b1.firebaseapp.com",
+      projectId: "rewardedtv-1e5b1",
+      storageBucket: "rewardedtv-1e5b1.firebasestorage.app",
+      messagingSenderId: "188103901236",
+      appId: "1:188103901236:web:4e968cbde9d01a03988a61",
+      measurementId: "G-3W0Y6BTS35"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function loadUsers() {
+      db.collection("users").get().then(snapshot => {
+        const tbody = document.querySelector("#users-table tbody");
+        tbody.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${d.email}</td>
+            <td><input class="watched"    data-id="${doc.id}" value="${d.watched   || 0}" /></td>
+            <td><input class="caps"       data-id="${doc.id}" value="${d.caps      || 0}" /></td>
+            <td><input class="balance"    data-id="${doc.id}" value="${d.balance   || 0}" /></td>
+            <td><input class="wallet"     data-id="${doc.id}" value="${d.wallet    || ''}" /></td>
+            <td><input class="health"     data-id="${doc.id}" value="${d.health    || 0}" /></td>
+            <td><input class="pets"       data-id="${doc.id}" value="${d.pets      || 0}" /></td>
+            <td><input class="claimed"    data-id="${doc.id}" value="${d.claimed   || 0}" /></td>
+            <td><input class="vested"     data-id="${doc.id}" value="${d.vested    || 0}" /></td>
+            <td>
+              <button class="save-btn"          data-id="${doc.id}">Save</button>
+              <button class="reset-boost-btn"   data-id="${doc.id}">Reset Boost</button>
+              <button class="reset-helpers-btn" data-id="${doc.id}">Reset Helpers</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    document.addEventListener("click", e => {
+      const id = e.target.dataset.id;
+      const row = e.target.closest("tr");
+
+      if (e.target.classList.contains("save-btn")) {
+        const watched  = Number(row.querySelector(".watched").value);
+        const caps     = Number(row.querySelector(".caps").value);
+        const balance  = Number(row.querySelector(".balance").value);
+        const wallet   = row.querySelector(".wallet").value;
+        const health   = Number(row.querySelector(".health").value);
+        const pets     = Number(row.querySelector(".pets").value);
+        const claimed  = Number(row.querySelector(".claimed").value);
+        const vested   = Number(row.querySelector(".vested").value);
+
+        db.collection("users").doc(id).update({
+          watched, caps, balance, wallet,
+          health, pets, claimed, vested
+        })
+        .then(() => alert("✅ Saved!"))
+        .catch(err => { console.error(err); alert("❌ Save failed."); });
+      }
+
+      if (e.target.classList.contains("reset-boost-btn")) {
+        if (confirm("Are you sure you want to reset this user's boost to 0%?")) {
+          db.collection("users").doc(id).update({ boost: 0 })
+            .then(() => alert("✅ Boost reset to 0%"))
+            .catch(err => { console.error(err); alert("❌ Failed to reset boost."); });
+        }
+      }
+
+      if (e.target.classList.contains("reset-helpers-btn")) {
+        if (confirm("Are you sure you want to reset this user's helpers to 0?")) {
+          db.collection("users").doc(id).update({ helpers: [] })
+            .then(() => alert("✅ Helpers reset to 0"))
+            .catch(err => { console.error(err); alert("❌ Failed to reset helpers."); });
+        }
+      }
+    });
+
+    loadUsers();
+  </script>
+
+  <!-- ==== Publish Update Logic ==== -->
+  <script>
+    const form = document.getElementById('update-form');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('upd-title').value.trim();
+      const body  = document.getElementById('upd-body').value.trim();
+      if (!title || !body) {
+        return alert('Both title and body are required.');
+      }
+      db.collection('updates').add({
+        title,
+        body,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert('✅ Update published!');
+        form.reset();
+      })
+      .catch(err => {
+        console.error(err);
+        alert('❌ Failed to publish update.');
+      });
+    });
+  </script>
+</body>
+</html>
